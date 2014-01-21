@@ -15,7 +15,7 @@ public class TransactionIdUtils {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TransactionIdUtils.class);
 
 	public static String getTransactionIdOrDie(HttpHeaders httpHeaders, UUID uuid, String message) {
-		return getTransactionIdOrDie(httpHeaders, uuid.toString(), message);
+		return getTransactionIdOrDie(httpHeaders, uuid != null ? uuid.toString() : null, message);
 	}
 
 	public static String getTransactionIdOrDie(HttpHeaders httpHeaders, String uuid, String message) {
