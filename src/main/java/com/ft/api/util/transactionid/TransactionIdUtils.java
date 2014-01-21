@@ -14,13 +14,17 @@ public class TransactionIdUtils {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TransactionIdUtils.class);
 
-	public static String getTransactionIdOrDie(HttpHeaders httpHeaders, UUID uuid) {
+	public static String getTransactionIdOrDie(HttpHeaders httpHeaders, UUID uuid, String message) {
+		return getTransactionIdOrDie(httpHeaders, uuid.toString(), message);
+	}
+
+	public static String getTransactionIdOrDie(HttpHeaders httpHeaders, String uuid, String message) {
 		String transactionId = getHeaderValue(httpHeaders, TRANSACTION_ID_HEADER);
 		if (StringUtils.isEmpty(transactionId)) {
 			LOGGER.error("Transaction ID ({} header) not found.", TRANSACTION_ID_HEADER);
 			throw new IllegalStateException("Transaction ID not found.");
 		} else {
-			LOGGER.info("message=\"Publish request.\" transaction_id={} uuid={}.", transactionId, uuid);
+			LOGGER.info("message=\"{}\" transaction_id={} uuid={}.", message, transactionId, uuid);
 			return transactionId;
 		}
 	}
