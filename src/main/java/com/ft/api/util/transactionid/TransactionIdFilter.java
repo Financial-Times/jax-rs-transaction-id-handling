@@ -38,8 +38,6 @@ public class TransactionIdFilter implements Filter {
 
 			request.addHeader(TransactionIdUtils.TRANSACTION_ID_HEADER, transactionId);
 		}
-
-		LOGGER.info("message=\"Publish request.\" ");
 		return transactionId;
 	}
 
