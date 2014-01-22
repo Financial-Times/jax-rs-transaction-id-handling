@@ -4,6 +4,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +22,11 @@ public class TransactionIdFilter implements Filter {
 		AdditionalHeadersHttpServletRequestWrapper requestWithTransactionId = new AdditionalHeadersHttpServletRequestWrapper(httpServletRequest);
 		String transactionId = ensureTransactionIdIsPresent(requestWithTransactionId);
 
-		filterChain.doFilter(requestWithTransactionId , servletResponse);
+        MDC.put(TransactionIdUtils.TRANSACTION_ID_HEADER, transactionId);
+
+        filterChain.doFilter(requestWithTransactionId, servletResponse);
+
+        MDC.remove(TransactionIdUtils.TRANSACTION_ID_HEADER);
 
 		HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
 		httpServletResponse.setHeader(TransactionIdUtils.TRANSACTION_ID_HEADER, transactionId);
