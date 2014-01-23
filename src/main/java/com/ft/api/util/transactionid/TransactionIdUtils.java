@@ -24,7 +24,6 @@ public class TransactionIdUtils {
 			LOGGER.error("Transaction ID ({} header) not found.", TRANSACTION_ID_HEADER);
 			throw new IllegalStateException("Transaction ID not found.");
 		} else {
-			LOGGER.info("message=\"{}\" transaction_id={} uuid={}.", message, transactionId, uuid);
 			return transactionId;
 		}
 	}
