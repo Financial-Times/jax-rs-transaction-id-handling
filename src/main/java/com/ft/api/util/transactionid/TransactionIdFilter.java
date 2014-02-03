@@ -34,13 +34,17 @@ public class TransactionIdFilter implements Filter {
 
 	private String ensureTransactionIdIsPresent(AdditionalHeadersHttpServletRequestWrapper request) {
 		String transactionId = request.getHeader(TransactionIdUtils.TRANSACTION_ID_HEADER);
-		if (StringUtils.isEmpty(transactionId)) {
+		if (isTransactionIdProvided(transactionId)) {
 			LOGGER.warn("Transaction ID ({} header) not provided. It will be generated.", TransactionIdUtils.TRANSACTION_ID_HEADER);
 			transactionId = generateTransactionId();
 
 			request.addHeader(TransactionIdUtils.TRANSACTION_ID_HEADER, transactionId);
 		}
 		return transactionId;
+	}
+
+	private boolean isTransactionIdProvided(String transactionId) {
+		return StringUtils.isEmpty(transactionId) || transactionId.trim().isEmpty();
 	}
 
 	private String generateTransactionId() {
