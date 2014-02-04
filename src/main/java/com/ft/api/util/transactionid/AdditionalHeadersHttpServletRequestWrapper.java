@@ -1,5 +1,7 @@
 package com.ft.api.util.transactionid;
 
+import org.apache.commons.lang.StringUtils;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.util.*;
@@ -18,24 +20,24 @@ class AdditionalHeadersHttpServletRequestWrapper extends HttpServletRequestWrapp
 
 	@Override
 	public String getHeader(String name) {
-		String header = super.getHeader(name);
-		return (header != null) ? header : additionalHeaders.get(name);
+		String header = additionalHeaders.get(name);
+		return (header != null) ? header : super.getHeader(name);
 	}
 
 	@Override
 	public Enumeration<String> getHeaderNames() {
-		List<String> names = Collections.list(super.getHeaderNames());
+		Set<String> names = new HashSet<>(Collections.list(super.getHeaderNames()));
 		names.addAll(additionalHeaders.keySet());
 		return Collections.enumeration(names);
 	}
 
 	@Override
 	public Enumeration<String> getHeaders(String name) {
-		Enumeration<String> headers = super.getHeaders(name);
-		if (headers != null && headers.hasMoreElements()) {
-			return headers;
+		String header = additionalHeaders.get(name);
+		if (StringUtils.isEmpty(header) || header.trim().isEmpty()) {
+			return super.getHeaders(name);
 		} else {
-			return Collections.enumeration(Collections.singleton(additionalHeaders.get(name)));
+			return Collections.enumeration(Collections.singleton(header));
 		}
 	}
 }

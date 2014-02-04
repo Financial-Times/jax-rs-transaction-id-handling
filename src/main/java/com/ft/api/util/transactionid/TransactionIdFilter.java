@@ -27,7 +27,7 @@ public class TransactionIdFilter implements Filter {
 
         MDC.put("transaction_id", "transaction_id=" + transactionId);
 		LOGGER.info("Request received for {}", httpServletRequest.getPathInfo());
-        filterChain.doFilter(requestWithTransactionId, servletResponse);
+        filterChain.doFilter(requestWithTransactionId, httpServletResponse);
 		LOGGER.info("Request handled for {} with status {}", httpServletRequest.getPathInfo(), httpServletResponse.getStatus());
         MDC.remove("transaction_id");
 	}
