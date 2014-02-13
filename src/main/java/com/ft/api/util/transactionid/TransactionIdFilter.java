@@ -29,12 +29,19 @@ public class TransactionIdFilter implements Filter {
 		LOGGER.info("[REQUEST RECEIVED] uri={}", httpServletRequest.getPathInfo());
 
 		long startTime = System.currentTimeMillis();
-        filterChain.doFilter(requestWithTransactionId, httpServletResponse);
-		long endTime = System.currentTimeMillis();
-		long timeTakenMillis = (endTime - startTime);
+		boolean success = false;
+		try {
+        	filterChain.doFilter(requestWithTransactionId, httpServletResponse);
+			success = true;
+		} finally {
+			long endTime = System.currentTimeMillis();
+			long timeTakenMillis = (endTime - startTime);
 
-		LOGGER.info("[REQUEST HANDLED] uri={} time_ms={} status={}", httpServletRequest.getPathInfo(), timeTakenMillis, httpServletResponse.getStatus());
-        MDC.remove("transaction_id");
+			LOGGER.info("[REQUEST HANDLED] uri={} time_ms={} status={} exception_was_thrown={}",
+					httpServletRequest.getPathInfo(), timeTakenMillis, httpServletResponse.getStatus(), !success);
+
+			MDC.remove("transaction_id");
+		}
 	}
 
 	private String ensureTransactionIdIsPresent(AdditionalHeadersHttpServletRequestWrapper request) {
