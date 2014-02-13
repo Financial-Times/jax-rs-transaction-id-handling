@@ -26,9 +26,14 @@ public class TransactionIdFilter implements Filter {
         httpServletResponse.setHeader(TransactionIdUtils.TRANSACTION_ID_HEADER, transactionId);
 
         MDC.put("transaction_id", "transaction_id=" + transactionId);
-		LOGGER.info("Request received for {}", httpServletRequest.getPathInfo());
+		LOGGER.info("[REQUEST RECEIVED] uri={}", httpServletRequest.getPathInfo());
+
+		long startTime = System.currentTimeMillis();
         filterChain.doFilter(requestWithTransactionId, httpServletResponse);
-		LOGGER.info("Request handled for {} with status {}", httpServletRequest.getPathInfo(), httpServletResponse.getStatus());
+		long endTime = System.currentTimeMillis();
+		long timeTakenMillis = (endTime - startTime);
+
+		LOGGER.info("[REQUEST HANDLED] uri={} time_ms={} status={}", httpServletRequest.getPathInfo(), timeTakenMillis, httpServletResponse.getStatus());
         MDC.remove("transaction_id");
 	}
 
