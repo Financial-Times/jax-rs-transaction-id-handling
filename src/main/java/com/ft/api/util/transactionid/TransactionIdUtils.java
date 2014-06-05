@@ -14,11 +14,7 @@ public class TransactionIdUtils {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TransactionIdUtils.class);
 
-	public static String getTransactionIdOrDie(HttpHeaders httpHeaders, UUID uuid, String message) {
-		return getTransactionIdOrDie(httpHeaders, uuid != null ? uuid.toString() : null, message);
-	}
-
-	public static String getTransactionIdOrDie(HttpHeaders httpHeaders, String uuid, String message) {
+    public static String getTransactionIdOrDie(HttpHeaders httpHeaders) {
 		String transactionId = getHeaderValue(httpHeaders, TRANSACTION_ID_HEADER);
 		if (StringUtils.isEmpty(transactionId)) {
 			LOGGER.error("Transaction ID ({} header) not found.", TRANSACTION_ID_HEADER);
