@@ -1,6 +1,5 @@
 package com.ft.api.util.transactionid;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +47,7 @@ public class TransactionIdFilter implements Filter {
 		String transactionId = request.getHeader(TransactionIdUtils.TRANSACTION_ID_HEADER);
 		if (isTransactionIdProvided(transactionId)) {
 			LOGGER.warn("Transaction ID ({} header) not provided. It will be generated.", TransactionIdUtils.TRANSACTION_ID_HEADER);
-			transactionId = generateTransactionId();
+			transactionId = TransactionIdUtils.generateTransactionId();
 
 			request.addHeader(TransactionIdUtils.TRANSACTION_ID_HEADER, transactionId);
 		}
@@ -57,14 +56,6 @@ public class TransactionIdFilter implements Filter {
 
 	private boolean isTransactionIdProvided(String transactionId) {
 		return StringUtils.isEmpty(transactionId) || transactionId.trim().isEmpty();
-	}
-
-	private String generateTransactionId() {
-		return "tid_" + randomChars(10);
-	}
-
-	private String randomChars(int howMany) {
-		return RandomStringUtils.randomAlphanumeric(howMany).toLowerCase();
 	}
 
 	@Override
