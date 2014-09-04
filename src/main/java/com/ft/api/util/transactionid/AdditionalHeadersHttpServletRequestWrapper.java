@@ -8,7 +8,7 @@ import java.util.*;
 
 class AdditionalHeadersHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
-	final private Map<String, String> additionalHeaders = new HashMap<>();
+	final private Map<String, String> additionalHeaders = new HashMap<String, String>();
 
 	public AdditionalHeadersHttpServletRequestWrapper(HttpServletRequest request) {
 		super(request);
@@ -26,7 +26,7 @@ class AdditionalHeadersHttpServletRequestWrapper extends HttpServletRequestWrapp
 
 	@Override
 	public Enumeration<String> getHeaderNames() {
-		Set<String> names = new HashSet<>(Collections.list(super.getHeaderNames()));
+		Set<String> names = new HashSet<String>(Collections.list(super.getHeaderNames()));
 		names.addAll(additionalHeaders.keySet());
 		return Collections.enumeration(names);
 	}
