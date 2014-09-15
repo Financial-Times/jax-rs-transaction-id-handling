@@ -46,8 +46,8 @@ public class TransactionIdFilter implements Filter {
 	private String ensureTransactionIdIsPresent(AdditionalHeadersHttpServletRequestWrapper request) {
 		String transactionId = request.getHeader(TransactionIdUtils.TRANSACTION_ID_HEADER);
 		if (isTransactionIdProvided(transactionId)) {
-			LOGGER.warn("Transaction ID ({} header) not provided. It will be generated.", TransactionIdUtils.TRANSACTION_ID_HEADER);
 			transactionId = TransactionIdUtils.generateTransactionId();
+            LOGGER.warn("Transaction ID ({} header) not provided. It was generated: {}", TransactionIdUtils.TRANSACTION_ID_HEADER, transactionId);
 
 			request.addHeader(TransactionIdUtils.TRANSACTION_ID_HEADER, transactionId);
 		}
