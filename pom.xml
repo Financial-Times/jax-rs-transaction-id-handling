@@ -4,32 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>com.ft.parent</groupId>
-        <artifactId>parentPom</artifactId>
-        <version>2.12</version>
-    </parent>
-
-    <groupId>com.ft</groupId>
-    <artifactId>jaxrs-transaction-id-handling</artifactId>
-    <version>1.9</version>
+    <groupId>com.github.Financial-Times</groupId>
+    <artifactId>jax-rs-transaction-id-handling</artifactId>
+    <version>1.9.1</version>
 
     <packaging>jar</packaging>
     <name>Transaction ID Handling</name>
     <description>Provides a filer to generate a transaction ID and stick it one the response as well using a custom HTTP header.</description>
-
-    <repositories>
-        <repository>
-            <id>ft-releases</id>
-            <url>http://anthill.svc.ft.com:8081/nexus/content/groups/public</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-    </repositories>
 
     <dependencies>
         <dependency>
@@ -77,7 +58,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.6.3.201306030806</version>
+                <version>0.7.7.201606060606</version>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
