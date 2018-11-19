@@ -18,18 +18,18 @@
     <name>Transaction ID Handling</name>
     <description>Provides a filer to generate a transaction ID and stick it one the response as well using a custom HTTP header.</description>
 
-    <repositories>
+    <distributionManagement>
         <repository>
-            <id>ft-releases</id>
-            <url>http://anthill.svc.ft.com:8081/nexus/content/groups/public</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
+            <id>releases</id>
+            <name>Internal Releases</name>
+            <url>https://nexus.in.ft.com/repository/releases</url>
         </repository>
-    </repositories>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <uniqueVersion>true</uniqueVersion>
+            <url>https://nexus.in.ft.com/repository/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <dependencies>
         <dependency>
