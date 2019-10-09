@@ -32,6 +32,7 @@ jobs:
       - run:
           name: Publish Tag to Nexus repository
           command: |
+            cd ..
             mvn versions:set -DnewVersion=${CIRCLE_TAG}
             mvn versions:commit
             mvn deploy
