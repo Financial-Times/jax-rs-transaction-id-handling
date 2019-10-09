@@ -32,6 +32,9 @@ jobs:
       - run:
           name: Publish Tag to Nexus repository
           command: |
-            echo 'export HASH=$(git log -1 --pretty=format:%H)'
-            echo 'export VERSION_TAG=$(git tag -l --points-at $HASH | head -n1)'
+            echo 'export HASH=$(git log -1 --pretty=format:%H)' >> $BASH_ENV
+            echo 'export VERSION_TAG=$(git tag -l --points-at $HASH | head -n1)' >> $BASH_ENV
+            source ${BASH_ENV}
+            mvn versions:set -DnewVersion=
+            mvn versions:commit
             mvn deploy
