@@ -8,3 +8,9 @@ jobs:
       - run:
           name: Maven
           command: mvn clean verify
+
+workflows:
+  version: 2
+  test-and-build:
+    jobs:
+      - build
