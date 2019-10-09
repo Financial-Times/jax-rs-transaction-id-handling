@@ -26,6 +26,8 @@ jobs:
           name: Maven
           command: mvn clean verify
   publish-nexus:
+    docker:
+      - image: coco/dropwizardbase-internal:v1.0.3
     steps:
       - run:
           name: Publish Tag to Nexus repository
