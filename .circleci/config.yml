@@ -26,13 +26,15 @@ jobs:
           name: Maven
           command: mvn clean verify
   publish-nexus:
+    working_directory: ~/jaxrs-transaction-id-handling
     docker:
       - image: coco/dropwizardbase-internal:v1.0.3
     steps:
+      - checkout:
+            path: ~/jaxrs-transaction-id-handling
       - run:
           name: Publish Tag to Nexus repository
           command: |
-            cd jaxrs-transaction-id-handling
             mvn versions:set -DnewVersion=${CIRCLE_TAG}
             mvn versions:commit
             mvn deploy
