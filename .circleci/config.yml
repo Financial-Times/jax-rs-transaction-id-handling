@@ -25,6 +25,8 @@ jobs:
       - run:
           name: Maven
           command: mvn clean verify
+  publish-nexus:
+    steps:
       - run:
           name: Publish Tag to Nexus repository
           command: |
