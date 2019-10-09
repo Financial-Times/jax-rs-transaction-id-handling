@@ -8,6 +8,8 @@ workflows:
             tags:
               only: /.*/
       - publish-nexus:
+          requires:
+            - build
           filters:
             branches:
               ignore: /.*/
