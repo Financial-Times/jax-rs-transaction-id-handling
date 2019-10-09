@@ -12,7 +12,7 @@
 
     <groupId>com.ft</groupId>
     <artifactId>jaxrs-transaction-id-handling</artifactId>
-    <version>2.5.1</version>
+    <version>${env.VERSION_TAG}</version>
 
     <packaging>jar</packaging>
     <name>Transaction ID Handling</name>
