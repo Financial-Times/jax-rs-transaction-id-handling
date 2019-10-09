@@ -1,19 +1,23 @@
 package com.ft.api.util.transactionid;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
-
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import static com.ft.membership.logging.Operation.operation;
 
 import java.io.IOException;
 
-public class TransactionIdFilter implements Filter {
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(TransactionIdFilter.class);
+import org.apache.commons.lang.StringUtils;
+
+import com.ft.membership.logging.Operation;
+
+public class TransactionIdFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -24,9 +28,14 @@ public class TransactionIdFilter implements Filter {
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
         httpServletResponse.setHeader(TransactionIdUtils.TRANSACTION_ID_HEADER, transactionId);
 
-        MDC.put("transaction_id", "transaction_id=" + transactionId);
-		LOGGER.info("[REQUEST RECEIVED] uri={}", httpServletRequest.getPathInfo());
+		final Operation operationJson = operation("doFilter").jsonLayout()
+			.initiate(this);
 
+		operationJson.logIntermediate()
+			.yielding("transaction_id", transactionId)
+			.yielding("msg", "[REQUEST RECEIVED] uri=" + httpServletRequest.getPathInfo())
+			.logInfo();
+        
 		long startTime = System.currentTimeMillis();
 		boolean success = false;
 		try {
@@ -36,10 +45,14 @@ public class TransactionIdFilter implements Filter {
 			long endTime = System.currentTimeMillis();
 			long timeTakenMillis = (endTime - startTime);
 
-			LOGGER.info("[REQUEST HANDLED] uri={} time_ms={} status={} exception_was_thrown={}",
-					httpServletRequest.getPathInfo(), timeTakenMillis, httpServletResponse.getStatus(), !success);
+			operationJson.logIntermediate()
+				.yielding("msg", "REQUEST HANDLED")
+				.yielding("time", timeTakenMillis)
+				.yielding("uri", httpServletRequest.getPathInfo())
+				.yielding("status", httpServletResponse.getStatus())
+				.yielding("exception_was_thrown", !success)
+				.logInfo();
 
-			MDC.remove("transaction_id");
 		}
 	}
 
@@ -47,7 +60,13 @@ public class TransactionIdFilter implements Filter {
 		String transactionId = request.getHeader(TransactionIdUtils.TRANSACTION_ID_HEADER);
 		if (isTransactionIdProvided(transactionId)) {
 			transactionId = TransactionIdUtils.generateTransactionId();
-            LOGGER.warn("Transaction ID ({} header) not provided. It was generated: {}", TransactionIdUtils.TRANSACTION_ID_HEADER, transactionId);
+			final Operation operationJson = operation("ensureTransactionIdIsPresent").jsonLayout()
+				.initiate(this);
+
+			operationJson.logIntermediate()
+				.yielding("transaction_id", transactionId)
+				.yielding("msg", "Transaction ID (" + TransactionIdUtils.TRANSACTION_ID_HEADER + " header) not provided. It was generated: " + transactionId)
+				.logWarn();
 
 			request.addHeader(TransactionIdUtils.TRANSACTION_ID_HEADER, transactionId);
 		}

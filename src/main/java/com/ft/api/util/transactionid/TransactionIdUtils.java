@@ -2,18 +2,21 @@ package com.ft.api.util.transactionid;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.ft.membership.logging.Operation;
 
 import javax.ws.rs.core.HttpHeaders;
+
+import static com.ft.membership.logging.Operation.operation;
+
 import java.util.List;
 
 public class TransactionIdUtils {
 
 	public static final String TRANSACTION_ID_HEADER = "X-Request-Id";
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(TransactionIdUtils.class);
-
+	public static final Operation operationJson = operation("getTransactionIdOrDie").jsonLayout()
+		.initiate(TransactionIdUtils.class); 
+	
 	public static String generateTransactionId() {
 		return "tid_" + randomChars(10);
 	}
@@ -25,7 +28,11 @@ public class TransactionIdUtils {
     public static String getTransactionIdOrDie(HttpHeaders httpHeaders) {
 		String transactionId = getHeaderValue(httpHeaders, TRANSACTION_ID_HEADER);
 		if (StringUtils.isEmpty(transactionId)) {
-			LOGGER.error("Transaction ID ({} header) not found.", TRANSACTION_ID_HEADER);
+			operationJson.logIntermediate()
+				.yielding("transaction_id", transactionId)
+				.yielding("msg", "Transaction ID (" + TRANSACTION_ID_HEADER + " header) not found.")
+				.logError();
+
 			throw new IllegalStateException("Transaction ID not found.");
 		} else {
 			return transactionId;
