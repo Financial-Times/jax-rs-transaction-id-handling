@@ -32,8 +32,6 @@ jobs:
       - run:
           name: Publish Tag to Nexus repository
           command: |
-            HASH=$(git log -1 --pretty=format:%H)
-            TAG=$(git tag -l --points-at $HASH | head -n1)
-            VERSION=${TAG:-untagged}
-            mvn versions:set -DnewVersion=$VERSION
+            mvn versions:set -DnewVersion=${CIRCLE_TAG}
+            mvn versions:commit
             mvn deploy
