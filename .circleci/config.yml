@@ -1,4 +1,21 @@
 version: 2
+workflows:
+  version: 2
+  test-and-build:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /.*/
+      - publish-nexus:
+            requires:
+              - build
+            filters:
+              branches:
+                ignore: /.*/
+              tags:
+                only: /^\d+\.\d+\.\d+$/
+
 jobs:
   build:
     docker:
@@ -8,3 +25,16 @@ jobs:
       - run:
           name: Maven
           command: mvn clean verify
+  publish-nexus:
+    docker:
+      - image: coco/dropwizardbase-internal:v1.0.3
+    steps:
+      - run:
+          name: Publish Tag to Nexus repository
+          command: |
+            echo 'export HASH=$(git log -1 --pretty=format:%H)' >> $BASH_ENV
+            echo 'export VERSION_TAG=$(git tag -l --points-at $HASH | head -n1)' >> $BASH_ENV
+            source ${BASH_ENV}
+            mvn versions:set -DnewVersion=${VERSION_TAG}
+            mvn versions:commit
+            mvn deploy
