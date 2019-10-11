@@ -30,11 +30,6 @@ public class TransactionIdFilter implements Filter {
 
 		final Operation operationJson = operation("doFilter").jsonLayout()
 			.initiate(this);
-
-		operationJson.logIntermediate()
-			.yielding("transaction_id", transactionId)
-			.yielding("msg", "[REQUEST RECEIVED] uri=" + httpServletRequest.getPathInfo())
-			.logInfo();
         
 		long startTime = System.currentTimeMillis();
 		boolean success = false;
@@ -47,9 +42,17 @@ public class TransactionIdFilter implements Filter {
 
 			operationJson.logIntermediate()
 				.yielding("msg", "REQUEST HANDLED")
-				.yielding("time", timeTakenMillis)
-				.yielding("uri", httpServletRequest.getPathInfo())
+				.yielding("transaction_id", transactionId)
+				.yielding("responsetime", timeTakenMillis)
+				.yielding("protocol", httpServletRequest.getProtocol())
+				.yielding("uri", httpServletRequest.getRequestURI())
+				.yielding("path", httpServletRequest.getPathInfo())
+				.yielding("method", httpServletRequest.getMethod())
 				.yielding("status", httpServletResponse.getStatus())
+				.yielding("content_type", httpServletResponse.getContentType())
+				.yielding("size", httpServletResponse.getBufferSize())
+				.yielding("host", httpServletRequest.getRemoteHost())
+				.yielding("userAgent", httpServletRequest.getRemoteUser())
 				.yielding("exception_was_thrown", !success)
 				.logInfo();
 
