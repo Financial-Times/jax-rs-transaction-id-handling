@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.MDC;
 
 import com.ft.membership.logging.Operation;
 
@@ -28,6 +29,7 @@ public class TransactionIdFilter implements Filter {
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
         httpServletResponse.setHeader(TransactionIdUtils.TRANSACTION_ID_HEADER, transactionId);
 
+        MDC.put("transaction_id", "transaction_id=" + transactionId);
 		final Operation operationJson = operation("doFilter").jsonLayout()
 			.initiate(this);
         
@@ -55,7 +57,7 @@ public class TransactionIdFilter implements Filter {
 				.yielding("userAgent", httpServletRequest.getRemoteUser())
 				.yielding("exception_was_thrown", !success)
 				.logInfo();
-
+			MDC.remove("transaction_id");
 		}
 	}
 
