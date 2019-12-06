@@ -29,37 +29,34 @@ public class TransactionIdFilter implements Filter {
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
         httpServletResponse.setHeader(TransactionIdUtils.TRANSACTION_ID_HEADER, transactionId);
 
-        MDC.put("transaction_id", "transaction_id=" + transactionId);
-		final Operation operationJson = operation("doFilter").jsonLayout()
-			.initiate(this);
-        
-		long startTime = System.currentTimeMillis();
-		boolean success = false;
-		try {
-        	filterChain.doFilter(requestWithTransactionId, httpServletResponse);
-			success = true;
-		} finally {
-			long endTime = System.currentTimeMillis();
-			long timeTakenMillis = (endTime - startTime);
+        MDC.put("transaction_id", transactionId);
+        final Operation operationJson = operation("doFilter").jsonLayout().initiate(this);
 
-			operationJson.logIntermediate()
-				.yielding("msg", "REQUEST HANDLED")
-				.yielding("systemcode", "jaxrs-transaction-id-handling")
-				.yielding("transaction_id", transactionId)
-				.yielding("responsetime", timeTakenMillis)
-				.yielding("protocol", httpServletRequest.getProtocol())
-				.yielding("uri", httpServletRequest.getRequestURI())
-				.yielding("path", httpServletRequest.getPathInfo())
-				.yielding("method", httpServletRequest.getMethod())
-				.yielding("status", httpServletResponse.getStatus())
-				.yielding("content_type", httpServletResponse.getContentType())
-				.yielding("size", httpServletResponse.getBufferSize())
-				.yielding("host", httpServletRequest.getRemoteHost())
-				.yielding("userAgent", httpServletRequest.getRemoteUser())
-				.yielding("exception_was_thrown", !success)
-				.logInfo();
-			MDC.remove("transaction_id");
-		}
+        long startTime = System.currentTimeMillis();
+        boolean success = false;
+        try {
+            filterChain.doFilter(requestWithTransactionId, httpServletResponse);
+            success = true;
+        } finally {
+            long endTime = System.currentTimeMillis();
+            long timeTakenMillis = (endTime - startTime);
+
+            operationJson.logIntermediate().yielding("msg", "REQUEST HANDLED")
+                    .yielding("systemcode", "jaxrs-transaction-id-handling")
+                    .yielding("transaction_id", transactionId)
+                    .yielding("responsetime", timeTakenMillis)
+                    .yielding("protocol", httpServletRequest.getProtocol())
+                    .yielding("uri", httpServletRequest.getRequestURI())
+                    .yielding("path", httpServletRequest.getPathInfo())
+                    .yielding("method", httpServletRequest.getMethod())
+                    .yielding("status", httpServletResponse.getStatus())
+                    .yielding("content_type", httpServletResponse.getContentType())
+                    .yielding("size", httpServletResponse.getBufferSize())
+                    .yielding("host", httpServletRequest.getRemoteHost())
+                    .yielding("userAgent", httpServletRequest.getRemoteUser())
+                    .yielding("exception_was_thrown", !success).logInfo();
+            MDC.remove("transaction_id");
+        }
 	}
 
 	private String ensureTransactionIdIsPresent(AdditionalHeadersHttpServletRequestWrapper request) {
