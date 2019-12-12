@@ -29,7 +29,7 @@ public class TransactionIdFilter implements Filter {
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
         httpServletResponse.setHeader(TransactionIdUtils.TRANSACTION_ID_HEADER, transactionId);
 
-        MDC.put("transaction_id", transactionId);
+        MDC.put("transaction_id", "transaction_id=" + transactionId);
         final Operation operationJson = operation("doFilter").jsonLayout().initiate(this);
 
         long startTime = System.currentTimeMillis();
