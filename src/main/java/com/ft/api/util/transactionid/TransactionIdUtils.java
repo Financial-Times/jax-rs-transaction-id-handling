@@ -14,6 +14,7 @@ import java.util.List;
 public class TransactionIdUtils {
 
 	public static final String TRANSACTION_ID_HEADER = "X-Request-Id";
+	public static final String TRANSACTION_ID_MDC_KEY = "transaction_id";
 	public static final Operation operationJson = operation("getTransactionIdOrDie").jsonLayout()
 		.initiate(TransactionIdUtils.class); 
 	
@@ -29,7 +30,7 @@ public class TransactionIdUtils {
 		String transactionId = getHeaderValue(httpHeaders, TRANSACTION_ID_HEADER);
 		if (StringUtils.isEmpty(transactionId)) {
 			operationJson.logIntermediate()
-				.yielding("transaction_id", transactionId)
+				.yielding(TRANSACTION_ID_MDC_KEY, transactionId)
 				.yielding("msg", "Transaction ID (" + TRANSACTION_ID_HEADER + " header) not found.")
 				.logError();
 

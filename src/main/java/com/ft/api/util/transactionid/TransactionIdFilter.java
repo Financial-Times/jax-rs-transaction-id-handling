@@ -1,5 +1,6 @@
 package com.ft.api.util.transactionid;
 
+import static com.ft.api.util.transactionid.TransactionIdUtils.TRANSACTION_ID_MDC_KEY;
 import static com.ft.membership.logging.Operation.operation;
 
 import java.io.IOException;
@@ -22,6 +23,7 @@ public class TransactionIdFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+
 		HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
 		AdditionalHeadersHttpServletRequestWrapper requestWithTransactionId = new AdditionalHeadersHttpServletRequestWrapper(httpServletRequest);
 		String transactionId = ensureTransactionIdIsPresent(requestWithTransactionId);
@@ -29,7 +31,7 @@ public class TransactionIdFilter implements Filter {
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
         httpServletResponse.setHeader(TransactionIdUtils.TRANSACTION_ID_HEADER, transactionId);
 
-        MDC.put("transaction_id", "transaction_id=" + transactionId);
+        MDC.put(TRANSACTION_ID_MDC_KEY, TRANSACTION_ID_MDC_KEY + "=" + transactionId);
         final Operation operationJson = operation("doFilter").jsonLayout().initiate(this);
 
         long startTime = System.currentTimeMillis();
@@ -43,7 +45,7 @@ public class TransactionIdFilter implements Filter {
 
             operationJson.logIntermediate().yielding("msg", "REQUEST HANDLED")
                     .yielding("systemcode", "jaxrs-transaction-id-handling")
-                    .yielding("transaction_id", transactionId)
+                    .yielding(TRANSACTION_ID_MDC_KEY, transactionId)
                     .yielding("responsetime", timeTakenMillis)
                     .yielding("protocol", httpServletRequest.getProtocol())
                     .yielding("uri", httpServletRequest.getRequestURI())
@@ -55,7 +57,7 @@ public class TransactionIdFilter implements Filter {
                     .yielding("host", httpServletRequest.getRemoteHost())
                     .yielding("userAgent", httpServletRequest.getRemoteUser())
                     .yielding("exception_was_thrown", !success).logInfo();
-            MDC.remove("transaction_id");
+            MDC.remove(TRANSACTION_ID_MDC_KEY);
         }
 	}
 
@@ -67,7 +69,7 @@ public class TransactionIdFilter implements Filter {
 				.initiate(this);
 
 			operationJson.logIntermediate()
-				.yielding("transaction_id", transactionId)
+				.yielding(TRANSACTION_ID_MDC_KEY, transactionId)
 				.yielding("msg", "Transaction ID (" + TransactionIdUtils.TRANSACTION_ID_HEADER + " header) not provided. It was generated: " + transactionId)
 				.logWarn();
 
