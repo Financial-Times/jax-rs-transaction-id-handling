@@ -1,4 +1,10 @@
-version: 2
+version: 2.1
+
+executors:
+  maven:
+    docker:
+      - image: maven:3.6-jdk-11
+
 workflows:
   version: 2
   test-and-build:
@@ -18,24 +24,28 @@ workflows:
 
 jobs:
   build:
-    docker:
-      - image: coco/dropwizardbase-internal:v1.0.3
+    executor: maven
     steps:
       - checkout
       - run:
           name: Maven
-          command: mvn clean verify
-
+          command: |
+            mkdir /root/.m2/
+            curl -v -o /root/.m2/settings.xml "https://raw.githubusercontent.com/Financial-Times/nexus-settings/master/public-settings.xml"
+            mvn clean verify
+            rm -rf /root/.m2/*
   publish-nexus:
     working_directory: ~/jaxrs-transaction-id-handling
-    docker:
-      - image: coco/dropwizardbase-internal:v1.0.3
+    executor: maven
     steps:
       - checkout:
             path: ~/jaxrs-transaction-id-handling
       - run:
           name: Publish Tag to Nexus repository
           command: |
+            mkdir /root/.m2/
+            curl -v -o /root/.m2/settings.xml "https://raw.githubusercontent.com/Financial-Times/nexus-settings/master/public-settings.xml"
             mvn versions:set -DnewVersion=${CIRCLE_TAG}
             mvn versions:commit
             mvn deploy
+            rm -rf /root/.m2/*
