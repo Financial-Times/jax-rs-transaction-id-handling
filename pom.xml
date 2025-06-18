@@ -20,14 +20,14 @@
 
     <distributionManagement>
         <repository>
-            <id>releases</id>
+            <id>cloudsmith</id>
             <name>Internal Releases</name>
-            <url>https://nexus.in.ft.com/repository/releases</url>
+            <url>https://maven.packages.ft.com/financial-times-internal-releases/</url>
         </repository>
         <snapshotRepository>
-            <id>snapshots</id>
+            <id>cloudsmith</id>
             <uniqueVersion>true</uniqueVersion>
-            <url>https://nexus.in.ft.com/repository/snapshots/</url>
+            <url>https://maven.packages.ft.com/financial-times-internal-unstable/</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -95,6 +95,18 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.eluder.coveralls</groupId>
+                <artifactId>coveralls-maven-plugin</artifactId>
+                <version>4.3.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>javax.xml.bind</groupId>
+                        <artifactId>jaxb-api</artifactId>
+                        <version>2.3.1</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
